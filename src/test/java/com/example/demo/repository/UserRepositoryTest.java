@@ -10,13 +10,14 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 
+import static com.example.demo.TestContext.ACTIVE_ID;
+import static com.example.demo.TestContext.ACTIVE_EMAIL;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = TestContext.class)
 @DataJpaTest
-public class UserRepositoryTest {
-    public static final long ID = 1L;
-    public static final String MAIL = "birdob@gmail.com";
+class UserRepositoryTest {
+
     @Autowired
     UserRepository userRepository;
 
@@ -25,7 +26,7 @@ public class UserRepositoryTest {
         @Test
         void found() throws Exception {
             // When
-            Optional<UserEntity> result = userRepository.findByIdAndStatus(ID, UserStatus.ACTIVE);
+            Optional<UserEntity> result = userRepository.findByIdAndStatus(ACTIVE_ID, UserStatus.ACTIVE);
 
             // Then
             assertThat(result).isPresent();
@@ -34,7 +35,7 @@ public class UserRepositoryTest {
         @Test
         void notFound() throws Exception {
             // When
-            Optional<UserEntity> result = userRepository.findByIdAndStatus(ID, UserStatus.PENDING);
+            Optional<UserEntity> result = userRepository.findByIdAndStatus(ACTIVE_ID, UserStatus.PENDING);
 
             // Then
             assertThat(result).isEmpty();
@@ -46,7 +47,7 @@ public class UserRepositoryTest {
         @Test
         void found() throws Exception {
             // When
-            Optional<UserEntity> result = userRepository.findByEmailAndStatus(MAIL, UserStatus.ACTIVE);
+            Optional<UserEntity> result = userRepository.findByEmailAndStatus(ACTIVE_EMAIL, UserStatus.ACTIVE);
 
             // Then
             assertThat(result).isPresent();
@@ -55,7 +56,7 @@ public class UserRepositoryTest {
         @Test
         void notFound() throws Exception {
             // When
-            Optional<UserEntity> result = userRepository.findByEmailAndStatus(MAIL, UserStatus.PENDING);
+            Optional<UserEntity> result = userRepository.findByEmailAndStatus(ACTIVE_EMAIL, UserStatus.PENDING);
 
             // Then
             assertThat(result).isEmpty();
