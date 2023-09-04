@@ -10,8 +10,8 @@ import org.springframework.test.context.ContextConfiguration;
 
 import java.util.Optional;
 
-import static com.example.demo.TestContext.ACTIVE_ID;
 import static com.example.demo.TestContext.ACTIVE_EMAIL;
+import static com.example.demo.TestContext.ACTIVE_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ContextConfiguration(classes = TestContext.class)

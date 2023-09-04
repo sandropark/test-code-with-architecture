@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import com.example.demo.model.UserStatus;
+import com.example.demo.repository.PostEntity;
+import com.example.demo.repository.PostRepository;
 import com.example.demo.repository.UserEntity;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +20,28 @@ public class TestContext {
     public static final String INACTIVE_EMAIL = "inactive@gmail.com";
     public static final String PENDING_EMAIL = "pendig@gmail.com";
     public static final String CERTIFICATION_CODE = "123123123123";
+    public static final long POST_ID = 1L;
 
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PostRepository postRepository;
 
     @EventListener(ApplicationReadyEvent.class)
     void setUp() {
-        userRepository.save(getActiveUserEntity());
+        UserEntity activeUser = getActiveUserEntity();
+        userRepository.save(activeUser);
         userRepository.save(getInActiveUserEntity());
         userRepository.save(getPendigUserEntity());
+        postRepository.save(getPostEntity(activeUser));
+    }
+
+    private PostEntity getPostEntity(UserEntity activeUser) {
+        PostEntity postEntity = new PostEntity();
+        postEntity.setId(POST_ID);
+        postEntity.setContent("content");
+        postEntity.setWriter(activeUser);
+        return postEntity;
     }
 
     private UserEntity getActiveUserEntity() {
