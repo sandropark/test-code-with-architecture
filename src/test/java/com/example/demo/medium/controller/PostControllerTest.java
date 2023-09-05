@@ -1,6 +1,6 @@
-package com.example.demo.post.controller;
+package com.example.demo.medium.controller;
 
-import com.example.demo.common.domain.MyControllerTest;
+import com.example.demo.medium.MyControllerTest;
 import com.example.demo.post.domain.PostUpdate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;

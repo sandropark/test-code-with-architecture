@@ -1,6 +1,6 @@
-package com.example.demo.common.controller;
+package com.example.demo.medium.controller;
 
-import com.example.demo.common.domain.MyControllerTest;
+import com.example.demo.medium.MyControllerTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;

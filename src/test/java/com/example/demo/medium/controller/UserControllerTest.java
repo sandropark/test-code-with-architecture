@@ -1,6 +1,6 @@
-package com.example.demo.user.controller;
+package com.example.demo.medium.controller;
 
-import com.example.demo.common.domain.MyControllerTest;
+import com.example.demo.medium.MyControllerTest;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;

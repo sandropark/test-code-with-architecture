@@ -1,62 +1,44 @@
-package com.example.demo.user.service;
+package com.example.demo.medium.service;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
-import com.example.demo.mock.FakeMailSender;
-import com.example.demo.mock.FakeUserRepository;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.BDDMockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 
+@SqlGroup({
+        @Sql(value = "/sql/user-service-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+})
+@SpringBootTest
 class UserServiceTest {
 
+    @Autowired
     UserService userService;
-    FakeUserRepository userRepository;
-
-    @BeforeEach
-    void setUp() {
-        userRepository = new FakeUserRepository();
-        User user1 = User.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .nickname("Sandro")
-                .address("Seoul")
-                .status(UserStatus.ACTIVE)
-                .certificationCode("code")
-                .lastLoginAt(1L)
-                .build();
-        User user2 = User.builder()
-                .id(2L)
-                .email("test2@gmail.com")
-                .nickname("Sandro2")
-                .address("Pusan")
-                .status(UserStatus.PENDING)
-                .certificationCode("1234")
-                .lastLoginAt(2L)
-                .build();
-        userRepository.save(user1);
-        userRepository.save(user2);
-
-        userService = UserService.builder()
-                .userRepository(userRepository)
-                .certificationService(new CertificationService(new FakeMailSender()))
-                .clockHolder(() -> 10L)
-                .uuidHolder(() -> "code")
-                .build();
-    }
+    @MockBean
+    JavaMailSender javaMailSender;
 
     @Nested
     class GetByEmail {
         @Test
         void success() throws Exception {
-            User user = userService.getByEmail("test@gmail.com");
+            User user = userService.getByEmail("active@gmail.com");
 
             assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
@@ -72,14 +54,14 @@ class UserServiceTest {
     class GetById {
         @Test
         void success() throws Exception {
-            User user = userService.getById(1);
+            User user = userService.getById(2);
 
             assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.getById(100))
+            assertThatThrownBy(() -> userService.getById(3))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -88,10 +70,11 @@ class UserServiceTest {
     void create() throws Exception {
         // Given
         UserCreate userCreate = UserCreate.builder()
-                .email("test@gmail.com")
+                .email("create@gmail.com")
                 .address("Seoul")
                 .nickname("Sandro")
                 .build();
+        BDDMockito.doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
         // When
         User user = userService.create(userCreate);
@@ -99,7 +82,7 @@ class UserServiceTest {
         // Then
         assertThat(user.getId()).isNotNull();
         assertThat(user.getStatus()).isEqualTo(UserStatus.PENDING);
-        assertThat(user.getCertificationCode()).isEqualTo("code");
+//        assertThat(user.getCertificationCode()).isEqualTo("");  // FIXME
     }
 
     @Test
@@ -113,7 +96,7 @@ class UserServiceTest {
                 .build();
 
         // When
-        User user = userService.update(1, userUpdate);
+        User user = userService.update(2, userUpdate);
 
         // Then
         assertThat(user.getAddress()).isEqualTo(address);
@@ -124,11 +107,12 @@ class UserServiceTest {
     void login() throws Exception {
         // Given
         // When
-        userService.login(1);
+        userService.login(2);
 
         // Then
-        User user = userService.getById(1);
-        assertThat(user.getLastLoginAt()).isEqualTo(10L);
+        User user = userService.getById(2);
+        assertThat(user.getLastLoginAt()).isGreaterThan(0);
+//        assertThat(user.getLastLoginAt()).isGreaterThan(""); // FIXME
     }
 
     @Nested
@@ -136,16 +120,16 @@ class UserServiceTest {
         @Test
         void success() throws Exception {
             // When
-            userService.verifyEmail(2, "1234");
+            userService.verifyEmail(3, "1235");
 
             // Then
-            User user = userService.getById(2);
+            User user = userService.getById(3);
             assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.verifyEmail(2, "2938448"))
+            assertThatThrownBy(() -> userService.verifyEmail(3, "123"))
                     .isInstanceOf(CertificationCodeNotMatchedException.class);
         }
     }

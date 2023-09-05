@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.medium;
 
 import com.example.demo.post.infrastructure.PostJpaRepository;
 import com.example.demo.user.infrastructure.UserJpaRepository;
