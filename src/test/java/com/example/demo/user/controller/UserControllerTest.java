@@ -4,7 +4,7 @@ import com.example.demo.common.domain.MyControllerTest;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
 import com.example.demo.user.infrastructure.UserEntity;
-import com.example.demo.user.infrastructure.UserRepository;
+import com.example.demo.user.infrastructure.UserJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class UserControllerTest {
     @Autowired
     MockMvc mvc;
     @Autowired
-    UserRepository userRepository;
+    UserJpaRepository userRepository;
     @Autowired
     ObjectMapper objectMapper;
 

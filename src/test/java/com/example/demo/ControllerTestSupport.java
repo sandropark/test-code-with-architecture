@@ -1,7 +1,7 @@
 package com.example.demo;
 
-import com.example.demo.post.infrastructure.PostRepository;
-import com.example.demo.user.infrastructure.UserRepository;
+import com.example.demo.post.infrastructure.PostJpaRepository;
+import com.example.demo.user.infrastructure.UserJpaRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,9 +14,9 @@ public class ControllerTestSupport {
     @Autowired
     MockMvc mvc;
     @Autowired
-    UserRepository userRepository;
+    UserJpaRepository userRepository;
     @Autowired
-    PostRepository postRepository;
+    PostJpaRepository postRepository;
     @Autowired
     ObjectMapper objectMapper;
 }

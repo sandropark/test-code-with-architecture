@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class UserRepositoryTest {
 
     @Autowired
-    UserRepository userRepository;
+    UserJpaRepository userRepository;
 
     @Nested
     class FindByIdAndStatus {
