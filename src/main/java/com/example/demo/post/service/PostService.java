@@ -6,25 +6,25 @@ import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
 import com.example.demo.post.service.port.PostRepository;
 import com.example.demo.user.domain.User;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.service.port.UserRepository;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Clock;
-
-@Service
+@Builder
 @RequiredArgsConstructor
+@Service
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     public Post getById(long id) {
         return postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Posts", id));
     }
 
     public Post create(PostCreate postCreate) {
-        User user = userService.getById(postCreate.getWriterId());
+        User user = userRepository.getById(postCreate.getWriterId());
         Post post = Post.create(postCreate, user);
         return postRepository.save(post);
     }

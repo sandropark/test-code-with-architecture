@@ -34,6 +34,11 @@ public class FakeUserRepository implements UserRepository {
     }
 
     @Override
+    public User getById(long id) {
+        return findById(id).orElseThrow();
+    }
+
+    @Override
     public User save(User user) {
         if (user.getId() == null || user.getId() == 0) {
             user = User.builder()
