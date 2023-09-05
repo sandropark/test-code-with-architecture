@@ -61,6 +61,18 @@ class UserControllerTest extends ControllerTestSupport {
             UserEntity userEntity = userRepository.findById(2L).orElseThrow();
             assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
+
+        @Test
+        void failure() throws Exception {
+            mvc.perform(get("/api/users/2/verify")
+                            .queryParam("certificationCode", "3213")
+                    )
+                    .andDo(print())
+                    .andExpectAll(
+                            status().isForbidden(),
+                            content().string("자격 증명에 실패하였습니다.")
+                    );
+        }
     }
 
     @Test
