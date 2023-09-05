@@ -1,6 +1,8 @@
 package com.example.demo.user.service;
 
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.common.service.port.ClockHolder;
+import com.example.demo.common.service.port.UuidHolder;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
@@ -18,6 +20,8 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CertificationService certificationService;
+    private final UuidHolder uuidHolder;
+    private final ClockHolder clockHolder;
 
 
     public User getByEmail(String email) {
@@ -32,7 +36,7 @@ public class UserService {
 
     @Transactional
     public User create(UserCreate userCreate) {
-        User user = User.fromCreate(userCreate);
+        User user = User.create(userCreate, uuidHolder);
         User saved = userRepository.save(user);
         certificationService.send(saved.getEmail(), saved.getId(), saved.getCertificationCode());
         return saved;
@@ -48,7 +52,7 @@ public class UserService {
     @Transactional
     public void login(long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Users", id));
-        User login = user.login(Clock.systemUTC().millis());
+        User login = user.login(clockHolder);
         userRepository.save(login);
     }
 

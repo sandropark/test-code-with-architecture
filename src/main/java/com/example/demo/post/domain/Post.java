@@ -15,6 +15,14 @@ public class Post {
     private Long modifiedAt;
     private User writer;
 
+    public static Post create(PostCreate postCreate, User user) {
+        return Post.builder()
+                .content(postCreate.getContent())
+                .writer(user)
+                .createdAt(Clock.systemUTC().millis())
+                .build();
+    }
+
     public void update(PostUpdate postUpdate) {
         content = postUpdate.getContent();
         modifiedAt = Clock.systemUTC().millis();

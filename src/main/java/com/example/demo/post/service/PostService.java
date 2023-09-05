@@ -25,11 +25,7 @@ public class PostService {
 
     public Post create(PostCreate postCreate) {
         User user = userService.getById(postCreate.getWriterId());
-        Post post = Post.builder()
-                .content(postCreate.getContent())
-                .writer(user)
-                .createdAt(Clock.systemUTC().millis())
-                .build();
+        Post post = Post.create(postCreate, user);
         return postRepository.save(post);
     }
 
