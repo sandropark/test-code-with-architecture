@@ -1,10 +1,10 @@
 package com.example.demo.user.controller;
 
 import com.example.demo.common.domain.MyControllerTest;
+import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.infrastructure.UserEntity;
-import com.example.demo.user.infrastructure.UserJpaRepository;
+import com.example.demo.user.service.port.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ class UserControllerTest {
     @Autowired
     MockMvc mvc;
     @Autowired
-    UserJpaRepository userRepository;
+    UserRepository userRepository;
     @Autowired
     ObjectMapper objectMapper;
 
@@ -71,8 +71,8 @@ class UserControllerTest {
                     .andDo(print())
                     .andExpectAll(status().isFound());
 
-            UserEntity userEntity = userRepository.findById(6L).orElseThrow();
-            assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
+            User user = userRepository.findById(6L).orElseThrow();
+            assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test

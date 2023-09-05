@@ -1,0 +1,64 @@
+package com.example.demo.user.domain;
+
+import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import lombok.*;
+
+@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
+public class User {
+    private final Long id;
+    private final String email;
+    private final String nickname;
+    private final String address;
+    private final String certificationCode;
+    private final UserStatus status;
+    private final Long lastLoginAt;
+
+    public static User fromCreate(UserCreate userCreate) {
+        return User.builder()
+                .email(userCreate.getEmail())
+                .nickname(userCreate.getNickname())
+                .address(userCreate.getAddress())
+                .status(UserStatus.PENDING)
+                .build();
+    }
+
+    public User update(UserUpdate userUpdate) {
+        return User.builder()
+                .id(id)
+                .email(email)
+                .nickname(userUpdate.getNickname())
+                .address(userUpdate.getAddress())
+                .certificationCode(certificationCode)
+                .status(status)
+                .lastLoginAt(lastLoginAt)
+                .build();
+    }
+
+    public User login(long millis) {
+        return User.builder()
+                .id(id)
+                .email(email)
+                .nickname(nickname)
+                .address(address)
+                .certificationCode(certificationCode)
+                .status(UserStatus.ACTIVE)
+                .lastLoginAt(millis)
+                .build();
+    }
+
+    public User certificate(String certificationCode) {
+        if (!this.certificationCode.equals(certificationCode))
+            throw new CertificationCodeNotMatchedException();
+        return User.builder()
+                .id(id)
+                .email(email)
+                .nickname(nickname)
+                .address(address)
+                .certificationCode(certificationCode)
+                .status(UserStatus.ACTIVE)
+                .lastLoginAt(lastLoginAt)
+                .build();
+    }
+}

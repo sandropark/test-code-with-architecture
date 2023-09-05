@@ -2,10 +2,10 @@ package com.example.demo.user.service;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.infrastructure.UserEntity;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -37,9 +37,9 @@ class UserServiceTest {
     class GetByEmail {
         @Test
         void success() throws Exception {
-            UserEntity userEntity = userService.getByEmail("active@gmail.com");
+            User user = userService.getByEmail("active@gmail.com");
 
-            assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
+            assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
@@ -53,9 +53,9 @@ class UserServiceTest {
     class GetById {
         @Test
         void success() throws Exception {
-            UserEntity userEntity = userService.getById(2);
+            User user = userService.getById(2);
 
-            assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
+            assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
@@ -76,12 +76,12 @@ class UserServiceTest {
         BDDMockito.doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
         // When
-        UserEntity userEntity = userService.create(userCreate);
+        User user = userService.create(userCreate);
 
         // Then
-        assertThat(userEntity.getId()).isNotNull();
-        assertThat(userEntity.getStatus()).isEqualTo(UserStatus.PENDING);
-//        assertThat(userEntity.getCertificationCode()).isEqualTo("");  // FIXME
+        assertThat(user.getId()).isNotNull();
+        assertThat(user.getStatus()).isEqualTo(UserStatus.PENDING);
+//        assertThat(user.getCertificationCode()).isEqualTo("");  // FIXME
     }
 
     @Test
@@ -95,11 +95,11 @@ class UserServiceTest {
                 .build();
 
         // When
-        UserEntity userEntity = userService.update(2, userUpdate);
+        User user = userService.update(2, userUpdate);
 
         // Then
-        assertThat(userEntity.getAddress()).isEqualTo(address);
-        assertThat(userEntity.getNickname()).isEqualTo(nickname);
+        assertThat(user.getAddress()).isEqualTo(address);
+        assertThat(user.getNickname()).isEqualTo(nickname);
     }
 
     @Test
@@ -109,9 +109,9 @@ class UserServiceTest {
         userService.login(2);
 
         // Then
-        UserEntity userEntity = userService.getById(2);
-        assertThat(userEntity.getLastLoginAt()).isGreaterThan(0);
-//        assertThat(userEntity.getLastLoginAt()).isGreaterThan(""); // FIXME
+        User user = userService.getById(2);
+        assertThat(user.getLastLoginAt()).isGreaterThan(0);
+//        assertThat(user.getLastLoginAt()).isGreaterThan(""); // FIXME
     }
 
     @Nested
@@ -122,8 +122,8 @@ class UserServiceTest {
             userService.verifyEmail(3, "1235");
 
             // Then
-            UserEntity userEntity = userService.getById(3);
-            assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
+            User user = userService.getById(3);
+            assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test

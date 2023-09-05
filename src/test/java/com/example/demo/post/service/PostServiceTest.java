@@ -1,8 +1,8 @@
 package com.example.demo.post.service;
 
+import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.infrastructure.PostEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +24,7 @@ class PostServiceTest {
     @Test
     void getById() throws Exception {
         // When
-        PostEntity foundPost = postService.getById(2);
+        Post foundPost = postService.getById(2);
 
         // Then
         assertThat(foundPost).isNotNull();
@@ -40,12 +40,12 @@ class PostServiceTest {
                 .build();
 
         // When
-        PostEntity postEntity = postService.create(postCreate);
+        Post post = postService.create(postCreate);
 
         // Then
-        assertThat(postEntity.getId()).isNotNull();
-        assertThat(postEntity.getContent()).isEqualTo(content);
-        assertThat(postEntity.getCreatedAt()).isGreaterThan(0);
+        assertThat(post.getId()).isNotNull();
+        assertThat(post.getContent()).isEqualTo(content);
+        assertThat(post.getCreatedAt()).isGreaterThan(0);
     }
 
     @Test
@@ -60,7 +60,7 @@ class PostServiceTest {
         postService.update(2, postUpdate);
 
         // Then
-        PostEntity updated = postService.getById(2);
+        Post updated = postService.getById(2);
         assertThat(updated.getContent()).isEqualTo(updateContent);
         assertThat(updated.getModifiedAt()).isGreaterThan(0);
     }
