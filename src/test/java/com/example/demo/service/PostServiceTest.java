@@ -1,18 +1,21 @@
 package com.example.demo.service;
 
-import com.example.demo.TestContext;
 import com.example.demo.model.dto.PostCreateDto;
 import com.example.demo.model.dto.PostUpdateDto;
 import com.example.demo.repository.PostEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
-import static com.example.demo.TestContext.ACTIVE_ID;
-import static com.example.demo.TestContext.POST_ID;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(classes = TestContext.class)
+@SqlGroup({
+        @Sql(value = "/sql/post-service-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+})
+@SpringBootTest
 class PostServiceTest {
 
     @Autowired
@@ -21,7 +24,7 @@ class PostServiceTest {
     @Test
     void getById() throws Exception {
         // When
-        PostEntity foundPost = postService.getById(POST_ID);
+        PostEntity foundPost = postService.getById(2);
 
         // Then
         assertThat(foundPost).isNotNull();
@@ -33,7 +36,7 @@ class PostServiceTest {
         String content = "content!!";
         PostCreateDto postCreateDto = PostCreateDto.builder()
                 .content(content)
-                .writerId(ACTIVE_ID)
+                .writerId(2)
                 .build();
 
         // When
@@ -54,10 +57,10 @@ class PostServiceTest {
                 .build();
 
         // When
-        postService.update(POST_ID, postUpdateDto);
+        postService.update(2, postUpdateDto);
 
         // Then
-        PostEntity updated = postService.getById(POST_ID);
+        PostEntity updated = postService.getById(2);
         assertThat(updated.getContent()).isEqualTo(updateContent);
         assertThat(updated.getModifiedAt()).isGreaterThan(0);
     }

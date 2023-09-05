@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.TestContext;
 import com.example.demo.exception.CertificationCodeNotMatchedException;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.model.UserStatus;
@@ -15,13 +14,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlGroup;
 
-import static com.example.demo.TestContext.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 
-@SpringBootTest(classes = TestContext.class)
+@SqlGroup({
+        @Sql(value = "/sql/user-service-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
+        @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD),
+})
+@SpringBootTest
 class UserServiceTest {
 
     @Autowired
@@ -33,14 +37,14 @@ class UserServiceTest {
     class GetByEmail {
         @Test
         void success() throws Exception {
-            UserEntity userEntity = userService.getByEmail(ACTIVE_EMAIL);
+            UserEntity userEntity = userService.getByEmail("active@gmail.com");
 
             assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.getByEmail(INACTIVE_EMAIL))
+            assertThatThrownBy(() -> userService.getByEmail("inactive@gmail.com"))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -49,14 +53,14 @@ class UserServiceTest {
     class GetById {
         @Test
         void success() throws Exception {
-            UserEntity userEntity = userService.getById(ACTIVE_ID);
+            UserEntity userEntity = userService.getById(2);
 
             assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.getById(INACTIVE_ID))
+            assertThatThrownBy(() -> userService.getById(3))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -91,7 +95,7 @@ class UserServiceTest {
                 .build();
 
         // When
-        UserEntity userEntity = userService.update(ACTIVE_ID, userUpdateDto);
+        UserEntity userEntity = userService.update(2, userUpdateDto);
 
         // Then
         assertThat(userEntity.getAddress()).isEqualTo(address);
@@ -102,10 +106,10 @@ class UserServiceTest {
     void login() throws Exception {
         // Given
         // When
-        userService.login(ACTIVE_ID);
+        userService.login(2);
 
         // Then
-        UserEntity userEntity = userService.getById(ACTIVE_ID);
+        UserEntity userEntity = userService.getById(2);
         assertThat(userEntity.getLastLoginAt()).isGreaterThan(0);
 //        assertThat(userEntity.getLastLoginAt()).isGreaterThan(""); // FIXME
     }
@@ -115,16 +119,16 @@ class UserServiceTest {
         @Test
         void success() throws Exception {
             // When
-            userService.verifyEmail(PENDING_ID, CERTIFICATION_CODE);
+            userService.verifyEmail(3, "1235");
 
             // Then
-            UserEntity userEntity = userService.getById(PENDING_ID);
+            UserEntity userEntity = userService.getById(3);
             assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.verifyEmail(PENDING_ID, "123"))
+            assertThatThrownBy(() -> userService.verifyEmail(3, "123"))
                     .isInstanceOf(CertificationCodeNotMatchedException.class);
         }
     }
