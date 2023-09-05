@@ -1,9 +1,13 @@
-package com.example.demo.controller;
+package com.example.demo.post.controller;
 
+import com.example.demo.common.domain.MyControllerTest;
 import com.example.demo.post.domain.PostCreate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -11,7 +15,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql(value = "/sql/post-create-test-data.sql")
-class PostCreateControllerTest extends ControllerTestSupport {
+@MyControllerTest
+class PostCreateControllerTest {
+
+    @Autowired
+    MockMvc mvc;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Test
     void create() throws Exception {

@@ -1,13 +1,18 @@
-package com.example.demo.controller;
+package com.example.demo.user.controller;
 
+import com.example.demo.common.domain.MyControllerTest;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
 import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.user.infrastructure.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -19,17 +24,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @Sql(value = "/sql/user-controller-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 })
-class UserControllerTest extends ControllerTestSupport {
+@MyControllerTest
+class UserControllerTest {
+
+    @Autowired
+    MockMvc mvc;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Nested
     class GetById {
         @Test
         void success() throws Exception {
-            mvc.perform(get("/api/users/1"))
+            mvc.perform(get("/api/users/5"))
                     .andDo(print())
                     .andExpectAll(
                             status().isOk(),
-                            jsonPath("$.id").value(1),
+                            jsonPath("$.id").value(5),
                             jsonPath("$.email").value("active@gmail.com"),
                             jsonPath("$.nickname").value("Sandro"),
                             jsonPath("$.status").value(UserStatus.ACTIVE.name()),
@@ -52,19 +65,19 @@ class UserControllerTest extends ControllerTestSupport {
     class Verify {
         @Test
         void success() throws Exception {
-            mvc.perform(get("/api/users/2/verify")
+            mvc.perform(get("/api/users/6/verify")
                             .queryParam("certificationCode", "1235")
                     )
                     .andDo(print())
                     .andExpectAll(status().isFound());
 
-            UserEntity userEntity = userRepository.findById(2L).orElseThrow();
+            UserEntity userEntity = userRepository.findById(6L).orElseThrow();
             assertThat(userEntity.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            mvc.perform(get("/api/users/2/verify")
+            mvc.perform(get("/api/users/6/verify")
                             .queryParam("certificationCode", "3213")
                     )
                     .andDo(print())
@@ -82,7 +95,7 @@ class UserControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.id").value(1),
+                        jsonPath("$.id").value(5),
                         jsonPath("$.email").value("active@gmail.com"),
                         jsonPath("$.nickname").value("Sandro"),
                         jsonPath("$.status").value(UserStatus.ACTIVE.name()),
@@ -98,15 +111,15 @@ class UserControllerTest extends ControllerTestSupport {
                 .build();
 
         mvc.perform(put("/api/users/me")
-                        .header("EMAIL", "active@gmail.com")
+                        .header("EMAIL", "test@gmail.com")
                         .content(objectMapper.writeValueAsBytes(updateDto))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.id").value(1),
-                        jsonPath("$.email").value("active@gmail.com"),
+                        jsonPath("$.id").value(7),
+                        jsonPath("$.email").value("test@gmail.com"),
                         jsonPath("$.nickname").value("SandroKing"),
                         jsonPath("$.status").value(UserStatus.ACTIVE.name()),
                         jsonPath("$.address").value("Busan")

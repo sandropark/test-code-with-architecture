@@ -1,11 +1,15 @@
-package com.example.demo.controller;
+package com.example.demo.post.controller;
 
+import com.example.demo.common.domain.MyControllerTest;
 import com.example.demo.post.domain.PostUpdate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlGroup;
+import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -16,7 +20,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         @Sql(value = "/sql/post-controller-test-data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD),
         @Sql(value = "/sql/delete-all-data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 })
-class PostControllerTest extends ControllerTestSupport {
+@MyControllerTest
+class PostControllerTest {
+
+    @Autowired
+    MockMvc mvc;
+    @Autowired
+    ObjectMapper objectMapper;
+
     @Nested
     class GetById {
         @Test
