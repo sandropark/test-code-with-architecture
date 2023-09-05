@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.PostCreateDto;
+import com.example.demo.post.domain.PostCreate;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
@@ -15,13 +15,13 @@ class PostCreateControllerTest extends ControllerTestSupport {
 
     @Test
     void create() throws Exception {
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
                 .content("안녕")
                 .writerId(1)
                 .build();
 
         mvc.perform(post("/api/posts")
-                        .content(objectMapper.writeValueAsBytes(postCreateDto))
+                        .content(objectMapper.writeValueAsBytes(postCreate))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())

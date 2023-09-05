@@ -1,8 +1,9 @@
 package com.example.demo.service;
 
-import com.example.demo.model.dto.PostCreateDto;
-import com.example.demo.model.dto.PostUpdateDto;
-import com.example.demo.repository.PostEntity;
+import com.example.demo.post.domain.PostCreate;
+import com.example.demo.post.domain.PostUpdate;
+import com.example.demo.post.service.PostService;
+import com.example.demo.post.infrastructure.PostEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -34,13 +35,13 @@ class PostServiceTest {
     void create() throws Exception {
         // Given
         String content = "content!!";
-        PostCreateDto postCreateDto = PostCreateDto.builder()
+        PostCreate postCreate = PostCreate.builder()
                 .content(content)
                 .writerId(2)
                 .build();
 
         // When
-        PostEntity postEntity = postService.create(postCreateDto);
+        PostEntity postEntity = postService.create(postCreate);
 
         // Then
         assertThat(postEntity.getId()).isNotNull();
@@ -52,12 +53,12 @@ class PostServiceTest {
     void update() throws Exception {
         // Given
         String updateContent = "Update content!!!";
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
                 .content(updateContent)
                 .build();
 
         // When
-        postService.update(2, postUpdateDto);
+        postService.update(2, postUpdate);
 
         // Then
         PostEntity updated = postService.getById(2);

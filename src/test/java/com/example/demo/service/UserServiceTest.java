@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
-import com.example.demo.exception.CertificationCodeNotMatchedException;
-import com.example.demo.exception.ResourceNotFoundException;
-import com.example.demo.model.UserStatus;
-import com.example.demo.model.dto.UserCreateDto;
-import com.example.demo.model.dto.UserUpdateDto;
-import com.example.demo.repository.UserEntity;
+import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.user.domain.UserStatus;
+import com.example.demo.user.domain.UserCreate;
+import com.example.demo.user.domain.UserUpdate;
+import com.example.demo.user.infrastructure.UserEntity;
+import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -68,7 +69,7 @@ class UserServiceTest {
     @Test
     void create() throws Exception {
         // Given
-        UserCreateDto userCreateDto = UserCreateDto.builder()
+        UserCreate userCreate = UserCreate.builder()
                 .email("create@gmail.com")
                 .address("Seoul")
                 .nickname("Sandro")
@@ -76,7 +77,7 @@ class UserServiceTest {
         BDDMockito.doNothing().when(javaMailSender).send(any(SimpleMailMessage.class));
 
         // When
-        UserEntity userEntity = userService.create(userCreateDto);
+        UserEntity userEntity = userService.create(userCreate);
 
         // Then
         assertThat(userEntity.getId()).isNotNull();
@@ -89,13 +90,13 @@ class UserServiceTest {
         // Given
         String address = "Jeju";
         String nickname = "Coco";
-        UserUpdateDto userUpdateDto = UserUpdateDto.builder()
+        UserUpdate userUpdate = UserUpdate.builder()
                 .address(address)
                 .nickname(nickname)
                 .build();
 
         // When
-        UserEntity userEntity = userService.update(2, userUpdateDto);
+        UserEntity userEntity = userService.update(2, userUpdate);
 
         // Then
         assertThat(userEntity.getAddress()).isEqualTo(address);

@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.UserCreateDto;
+import com.example.demo.user.domain.UserCreate;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,7 +20,7 @@ class UserCreateControllerTest extends ControllerTestSupport {
 
     @Test
     void create() throws Exception {
-        UserCreateDto createDto = UserCreateDto.builder()
+        UserCreate createDto = UserCreate.builder()
                 .nickname("Sandro")
                 .email("create@gmail.com")
                 .address("Seoul")

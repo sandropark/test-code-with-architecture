@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.dto.PostUpdateDto;
+import com.example.demo.post.domain.PostUpdate;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
@@ -46,12 +46,12 @@ class PostControllerTest extends ControllerTestSupport {
 
     @Test
     void updatePost() throws Exception {
-        PostUpdateDto postUpdateDto = PostUpdateDto.builder()
+        PostUpdate postUpdate = PostUpdate.builder()
                 .content("post update")
                 .build();
 
         mvc.perform(put("/api/posts/1")
-                        .content(objectMapper.writeValueAsBytes(postUpdateDto))
+                        .content(objectMapper.writeValueAsBytes(postUpdate))
                         .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andDo(print())
