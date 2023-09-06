@@ -10,7 +10,7 @@ import com.example.demo.post.service.PostServiceImpl;
 import com.example.demo.post.service.port.PostRepository;
 import com.example.demo.user.controller.UserController;
 import com.example.demo.user.controller.UserCreateController;
-import com.example.demo.user.controller.port.*;
+import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.service.CertificationService;
 import com.example.demo.user.service.UserServiceImpl;
 import com.example.demo.user.service.port.MailSender;
@@ -25,11 +25,7 @@ public class TestContainer {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CertificationService certificationService;
-    private final UserReadService userReadService;
     private final UserService userService;
-    private final UserCreateService userCreateService;
-    private final UserUpdateService userUpdateService;
-    private final AuthenticationService authenticationService;
     private final PostService postService;
     private final UserController userController;
     private final UserCreateController userCreateController;
@@ -42,29 +38,19 @@ public class TestContainer {
         userRepository = new FakeUserRepository();
         postRepository = new FakePostRepository();
         certificationService = new CertificationService(mailSender);
-        UserServiceImpl userServiceImpl = UserServiceImpl.builder()
+        userService = UserServiceImpl.builder()
                 .userRepository(userRepository)
                 .certificationService(certificationService)
                 .uuidHolder(() -> certificationCode)
                 .clockHolder(() -> millis)
                 .build();
-        userService = userServiceImpl;
-        userReadService = userServiceImpl;
-        userCreateService = userServiceImpl;
-        userUpdateService = userServiceImpl;
-        authenticationService = userServiceImpl;
         postService = PostServiceImpl.builder()
                 .postRepository(postRepository)
                 .userRepository(userRepository)
                 .clockHolder(() -> millis)
                 .build();
-        userController = UserController.builder()
-                .userReadService(userReadService)
-                .userCreateService(userCreateService)
-                .userUpdateService(userUpdateService)
-                .authenticationService(authenticationService)
-                .build();
-        userCreateController = new UserCreateController(userCreateService);
+        userController = UserController.builder().userService(userService).build();
+        userCreateController = new UserCreateController(userService);
         postController = new PostController(postService);
         postCreateController = new PostCreateController(postService);
     }
