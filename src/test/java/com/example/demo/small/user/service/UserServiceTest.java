@@ -2,8 +2,8 @@ package com.example.demo.small.user.service;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
-import com.example.demo.mock.FakeMailSender;
-import com.example.demo.mock.FakeUserRepository;
+import com.example.demo.mock.infrastructure.FakeMailSender;
+import com.example.demo.mock.infrastructure.FakeUserRepository;
 import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;

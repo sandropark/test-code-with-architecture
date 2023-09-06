@@ -11,9 +11,13 @@ public interface UserService {
 
     User getByEmail(String email);
 
-    void login(Long id);
+    User login(Long id);
+
+    User login(User user);
 
     User create(UserCreate userCreate);
 
     User update(Long id, UserUpdate userUpdate);
+
+    User update(User user, UserUpdate userUpdate);
 }

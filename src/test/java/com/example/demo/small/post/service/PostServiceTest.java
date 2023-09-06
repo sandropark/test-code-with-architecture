@@ -1,7 +1,7 @@
 package com.example.demo.small.post.service;
 
-import com.example.demo.mock.FakePostRepository;
-import com.example.demo.mock.FakeUserRepository;
+import com.example.demo.mock.infrastructure.FakePostRepository;
+import com.example.demo.mock.infrastructure.FakeUserRepository;
 import com.example.demo.post.controller.port.PostService;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;

@@ -6,7 +6,7 @@ public class ResourceNotFoundException extends RuntimeException {
         super(datasource + "에서 ID " + id + "를 찾을 수 없습니다.");
     }
 
-    public ResourceNotFoundException(String datasource, String id) {
-        super(datasource + "에서 ID " + id + "를 찾을 수 없습니다.");
+    public ResourceNotFoundException(String datasource, String email) {
+        super(datasource + "에서 EMAIL " + email + "를 찾을 수 없습니다.");
     }
 }

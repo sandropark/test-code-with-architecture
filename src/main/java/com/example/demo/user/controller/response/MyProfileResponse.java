@@ -2,11 +2,10 @@ package com.example.demo.user.controller.response;
 
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
+@ToString
+@EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
