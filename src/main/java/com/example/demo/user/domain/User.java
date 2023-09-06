@@ -5,6 +5,8 @@ import com.example.demo.common.service.port.ClockHolder;
 import com.example.demo.common.service.port.UuidHolder;
 import lombok.*;
 
+@ToString
+@EqualsAndHashCode
 @Getter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
@@ -22,8 +24,8 @@ public class User {
                 .email(userCreate.getEmail())
                 .nickname(userCreate.getNickname())
                 .address(userCreate.getAddress())
-                .status(UserStatus.PENDING)
                 .certificationCode(uuidHolder.random())
+                .status(UserStatus.PENDING)
                 .build();
     }
 
@@ -46,7 +48,7 @@ public class User {
                 .nickname(nickname)
                 .address(address)
                 .certificationCode(certificationCode)
-                .status(UserStatus.ACTIVE)
+                .status(status)
                 .lastLoginAt(clockHolder.mills())
                 .build();
     }

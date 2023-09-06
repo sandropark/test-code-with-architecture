@@ -1,6 +1,7 @@
 package com.example.demo.user.domain;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -8,6 +9,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class UserTest {
+
+    User activeUser;
+    User pendingUser;
+
+    @BeforeEach
+    void setUp() {
+        activeUser = getActiveUser();
+        pendingUser = getPendingUser();
+    }
 
     @Test
     void create() throws Exception {
@@ -17,17 +27,18 @@ class UserTest {
                 .nickname("Sandro")
                 .address("Seoul")
                 .build();
-        String code = "code";
 
         // When
+        String code = "code";
         User created = User.create(userCreate, () -> code);
 
         // Then
-        assertThat(created.getId()).isNull();
-        assertThat(created.getEmail()).isEqualTo("test@gmail.com");
-        assertThat(created.getNickname()).isEqualTo("Sandro");
-        assertThat(created.getAddress()).isEqualTo("Seoul");
         assertThat(created.getStatus()).isEqualTo(UserStatus.PENDING);
+
+        assertThat(created.getId()).isNull();
+        assertThat(created.getEmail()).isEqualTo(userCreate.getEmail());
+        assertThat(created.getNickname()).isEqualTo(userCreate.getNickname());
+        assertThat(created.getAddress()).isEqualTo(userCreate.getAddress());
         assertThat(created.getCertificationCode()).isEqualTo(code);
         assertThat(created.getLastLoginAt()).isNull();
     }
@@ -35,58 +46,41 @@ class UserTest {
     @Test
     void update() throws Exception {
         // Given
-        User user = User.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .nickname("Sandro")
-                .address("Seoul")
-                .status(UserStatus.ACTIVE)
-                .certificationCode("1234")
-                .lastLoginAt(1L)
-                .build();
-
         UserUpdate userUpdate = UserUpdate.builder()
                 .nickname("Sandeul")
                 .address("Pusan")
                 .build();
 
         // When
-        User updated = user.update(userUpdate);
+        User updated = activeUser.update(userUpdate);
 
         // Then
-        assertThat(updated.getId()).isEqualTo(1L);
-        assertThat(updated.getEmail()).isEqualTo("test@gmail.com");
-        assertThat(updated.getNickname()).isEqualTo("Sandeul");
-        assertThat(updated.getAddress()).isEqualTo("Pusan");
-        assertThat(updated.getStatus()).isEqualTo(UserStatus.ACTIVE);
-        assertThat(updated.getCertificationCode()).isEqualTo("1234");
-        assertThat(updated.getLastLoginAt()).isEqualTo(1L);
+        assertThat(updated.getNickname()).isEqualTo(userUpdate.getNickname());
+        assertThat(updated.getAddress()).isEqualTo(userUpdate.getAddress());
+
+        assertThat(updated.getId()).isEqualTo(activeUser.getId());
+        assertThat(updated.getEmail()).isEqualTo(activeUser.getEmail());
+        assertThat(updated.getStatus()).isEqualTo(activeUser.getStatus());
+        assertThat(updated.getCertificationCode()).isEqualTo(activeUser.getCertificationCode());
+        assertThat(updated.getLastLoginAt()).isEqualTo(activeUser.getLastLoginAt());
     }
 
     @Test
     void login() throws Exception {
         // Given
-        User user = User.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .nickname("Sandro")
-                .address("Seoul")
-                .status(UserStatus.ACTIVE)
-                .certificationCode("1234")
-                .lastLoginAt(1L)
-                .build();
-
         // When
-        User logined = user.login(() -> 10L);
+        long now = 10L;
+        User logined = activeUser.login(() -> now);
 
         // Then
-        assertThat(logined.getId()).isEqualTo(1L);
-        assertThat(logined.getEmail()).isEqualTo("test@gmail.com");
-        assertThat(logined.getNickname()).isEqualTo("Sandro");
-        assertThat(logined.getAddress()).isEqualTo("Seoul");
-        assertThat(logined.getStatus()).isEqualTo(UserStatus.ACTIVE);
-        assertThat(logined.getCertificationCode()).isEqualTo("1234");
-        assertThat(logined.getLastLoginAt()).isEqualTo(10L);
+        assertThat(logined.getLastLoginAt()).isEqualTo(now);
+
+        assertThat(logined.getId()).isEqualTo(activeUser.getId());
+        assertThat(logined.getEmail()).isEqualTo(activeUser.getEmail());
+        assertThat(logined.getNickname()).isEqualTo(activeUser.getNickname());
+        assertThat(logined.getAddress()).isEqualTo(activeUser.getAddress());
+        assertThat(logined.getStatus()).isEqualTo(activeUser.getStatus());
+        assertThat(logined.getCertificationCode()).isEqualTo(activeUser.getCertificationCode());
     }
 
     @Nested
@@ -94,49 +88,71 @@ class UserTest {
         @Test
         void success() throws Exception {
             // Given
-            User user = User.builder()
-                    .id(1L)
-                    .email("test@gmail.com")
-                    .nickname("Sandro")
-                    .address("Seoul")
-                    .status(UserStatus.PENDING)
-                    .certificationCode("1234")
-                    .lastLoginAt(1L)
-                    .build();
-            assertThat(user.getStatus()).isEqualTo(UserStatus.PENDING);
+            assertThat(pendingUser.getStatus()).isEqualTo(UserStatus.PENDING);
 
             // When
-            User certificated = user.certificate("1234");
+            User certificated = pendingUser.certificate(pendingUser.getCertificationCode());
 
             // Then
             assertThat(certificated.getStatus()).isEqualTo(UserStatus.ACTIVE);
-            assertThat(certificated.getId()).isEqualTo(1L);
-            assertThat(certificated.getEmail()).isEqualTo("test@gmail.com");
-            assertThat(certificated.getNickname()).isEqualTo("Sandro");
-            assertThat(certificated.getAddress()).isEqualTo("Seoul");
-            assertThat(certificated.getCertificationCode()).isEqualTo("1234");
-            assertThat(certificated.getLastLoginAt()).isEqualTo(1L);
+
+            assertThat(certificated.getId()).isEqualTo(pendingUser.getId());
+            assertThat(certificated.getEmail()).isEqualTo(pendingUser.getEmail());
+            assertThat(certificated.getNickname()).isEqualTo(pendingUser.getNickname());
+            assertThat(certificated.getAddress()).isEqualTo(pendingUser.getAddress());
+            assertThat(certificated.getCertificationCode()).isEqualTo(pendingUser.getCertificationCode());
+            assertThat(certificated.getLastLoginAt()).isEqualTo(pendingUser.getLastLoginAt());
         }
 
         @Test
         void failure() throws Exception {
             // Given
-            User user = User.builder()
-                    .id(1L)
-                    .email("test@gmail.com")
-                    .nickname("Sandro")
-                    .address("Seoul")
-                    .status(UserStatus.PENDING)
-                    .certificationCode("1234")
-                    .lastLoginAt(1L)
-                    .build();
-            assertThat(user.getStatus()).isEqualTo(UserStatus.PENDING);
+            assertThat(pendingUser.getStatus()).isEqualTo(UserStatus.PENDING);
 
             // When & Then
-            assertThatThrownBy(() -> user.certificate("4321"))
+            assertThatThrownBy(() -> pendingUser.certificate("4321"))
                     .isInstanceOf(CertificationCodeNotMatchedException.class)
                     .hasMessage("자격 증명에 실패하였습니다.");
         }
+    }
+
+    private static User getActiveUser() {
+        User temp = User.builder()
+                .id(1L)
+                .email("test@gmail.com")
+                .nickname("Sandro")
+                .address("Seoul")
+                .certificationCode("1234")
+                .status(UserStatus.ACTIVE)
+                .lastLoginAt(1L)
+                .build();
+        assertThat(temp.getStatus()).isEqualTo(UserStatus.ACTIVE);
+        validateNotNullFields(temp);
+        return temp;
+    }
+
+    private static User getPendingUser() {
+        User temp = User.builder()
+                .id(1L)
+                .email("test@gmail.com")
+                .nickname("Sandro")
+                .address("Seoul")
+                .certificationCode("1234")
+                .status(UserStatus.PENDING)
+                .lastLoginAt(1L)
+                .build();
+        assertThat(temp.getStatus()).isEqualTo(UserStatus.PENDING);
+        validateNotNullFields(temp);
+        return temp;
+    }
+
+    private static void validateNotNullFields(User temp) {
+        assertThat(temp.getId()).isNotNull();
+        assertThat(temp.getEmail()).isNotNull();
+        assertThat(temp.getNickname()).isNotNull();
+        assertThat(temp.getAddress()).isNotNull();
+        assertThat(temp.getCertificationCode()).isNotNull();
+        assertThat(temp.getLastLoginAt()).isNotNull();
     }
 
 }

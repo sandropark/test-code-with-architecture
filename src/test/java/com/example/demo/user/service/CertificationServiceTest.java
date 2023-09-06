@@ -12,14 +12,18 @@ class CertificationServiceTest {
         // Given
         FakeMailSender mailSender = new FakeMailSender();
         CertificationService certificationService = new CertificationService(mailSender);
+        String email = "test@gmail.com";
+        long userId = 1L;
+        String certificationCode = "1234";
+        String content = "Please click the following link to certify your email address: http://localhost:8080/api/users/" + userId + "/verify?certificationCode=" + certificationCode;
 
         // When
-        certificationService.send("test@gmail.com", 1L, "1234");
+        certificationService.send(email, userId, certificationCode);
 
         // Then
-        assertThat(mailSender.getEmail()).isEqualTo("test@gmail.com");
+        assertThat(mailSender.getEmail()).isEqualTo(email);
         assertThat(mailSender.getTitle()).isEqualTo("Please certify your email address");
-        assertThat(mailSender.getContent()).isEqualTo("Please click the following link to certify your email address: http://localhost:8080/api/users/1/verify?certificationCode=1234");
+        assertThat(mailSender.getContent()).isEqualTo(content);
     }
 
 }

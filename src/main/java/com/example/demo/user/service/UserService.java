@@ -53,7 +53,7 @@ public class UserService {
 
     @Transactional
     public void login(long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Users", id));
+        User user = getById(id);
         User login = user.login(clockHolder);
         userRepository.save(login);
     }
