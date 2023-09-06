@@ -1,5 +1,6 @@
-package com.example.demo.user.controller.response;
+package com.example.demo.small.user.controller.response;
 
+import com.example.demo.user.controller.response.UserResponse;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
 import org.junit.jupiter.api.Test;

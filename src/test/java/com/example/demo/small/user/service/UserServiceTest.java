@@ -1,4 +1,4 @@
-package com.example.demo.user.service;
+package com.example.demo.small.user.service;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
@@ -8,6 +8,8 @@ import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
+import com.example.demo.user.service.CertificationService;
+import com.example.demo.user.service.UserService;
 import com.example.demo.user.service.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

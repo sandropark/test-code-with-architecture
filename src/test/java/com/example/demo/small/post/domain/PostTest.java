@@ -1,5 +1,8 @@
-package com.example.demo.post.domain;
+package com.example.demo.small.post.domain;
 
+import com.example.demo.post.domain.Post;
+import com.example.demo.post.domain.PostCreate;
+import com.example.demo.post.domain.PostUpdate;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
 import org.junit.jupiter.api.BeforeEach;
