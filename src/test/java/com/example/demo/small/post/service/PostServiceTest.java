@@ -2,10 +2,11 @@ package com.example.demo.small.post.service;
 
 import com.example.demo.mock.FakePostRepository;
 import com.example.demo.mock.FakeUserRepository;
+import com.example.demo.post.controller.port.PostService;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.service.PostService;
+import com.example.demo.post.service.PostServiceImpl;
 import com.example.demo.post.service.port.PostRepository;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
@@ -13,7 +14,6 @@ import com.example.demo.user.service.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class PostServiceTest {
@@ -80,7 +80,7 @@ class PostServiceTest {
     }
 
     private PostService initPostService() {
-        return PostService.builder()
+        return PostServiceImpl.builder()
                 .postRepository(postRepository)
                 .userRepository(userRepository)
                 .clockHolder(() -> NOW)

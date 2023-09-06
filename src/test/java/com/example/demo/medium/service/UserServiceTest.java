@@ -2,11 +2,11 @@ package com.example.demo.medium.service;
 
 import com.example.demo.common.domain.exception.CertificationCodeNotMatchedException;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
+import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
-import com.example.demo.user.service.UserService;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -54,14 +54,14 @@ class UserServiceTest {
     class GetById {
         @Test
         void success() throws Exception {
-            User user = userService.getById(2);
+            User user = userService.getById(2L);
 
             assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.getById(3))
+            assertThatThrownBy(() -> userService.getById(3L))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
     }
@@ -82,7 +82,7 @@ class UserServiceTest {
         // Then
         assertThat(user.getId()).isNotNull();
         assertThat(user.getStatus()).isEqualTo(UserStatus.PENDING);
-//        assertThat(user.getCertificationCode()).isEqualTo("");  // FIXME
+//        assertThat(user.getCertificationCode()).isEqualTo("");
     }
 
     @Test
@@ -96,7 +96,7 @@ class UserServiceTest {
                 .build();
 
         // When
-        User user = userService.update(2, userUpdate);
+        User user = userService.update(2L, userUpdate);
 
         // Then
         assertThat(user.getAddress()).isEqualTo(address);
@@ -107,10 +107,10 @@ class UserServiceTest {
     void login() throws Exception {
         // Given
         // When
-        userService.login(2);
+        userService.login(2L);
 
         // Then
-        User user = userService.getById(2);
+        User user = userService.getById(2L);
         assertThat(user.getLastLoginAt()).isGreaterThan(0);
 //        assertThat(user.getLastLoginAt()).isGreaterThan(""); // FIXME
     }
@@ -120,16 +120,16 @@ class UserServiceTest {
         @Test
         void success() throws Exception {
             // When
-            userService.verifyEmail(3, "1235");
+            userService.verifyEmail(3L, "1235");
 
             // Then
-            User user = userService.getById(3);
+            User user = userService.getById(3L);
             assertThat(user.getStatus()).isEqualTo(UserStatus.ACTIVE);
         }
 
         @Test
         void failure() throws Exception {
-            assertThatThrownBy(() -> userService.verifyEmail(3, "123"))
+            assertThatThrownBy(() -> userService.verifyEmail(3L, "123"))
                     .isInstanceOf(CertificationCodeNotMatchedException.class);
         }
     }

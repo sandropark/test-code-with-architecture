@@ -3,6 +3,7 @@ package com.example.demo.user.service;
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.common.service.port.ClockHolder;
 import com.example.demo.common.service.port.UuidHolder;
+import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
@@ -13,30 +14,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Clock;
-
 @Builder
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CertificationService certificationService;
     private final UuidHolder uuidHolder;
     private final ClockHolder clockHolder;
 
-
+    @Override
     public User getByEmail(String email) {
         return userRepository.findByEmailAndStatus(email, UserStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Users", email));
     }
 
-    public User getById(long id) {
+    @Override
+    public User getById(Long id) {
         return userRepository.findByIdAndStatus(id, UserStatus.ACTIVE)
                 .orElseThrow(() -> new ResourceNotFoundException("Users", id));
     }
 
     @Transactional
+    @Override
     public User create(UserCreate userCreate) {
         User user = User.create(userCreate, uuidHolder);
         User saved = userRepository.save(user);
@@ -45,21 +46,23 @@ public class UserService {
     }
 
     @Transactional
-    public User update(long id, UserUpdate userUpdate) {
+    @Override
+    public User update(Long id, UserUpdate userUpdate) {
         User user = getById(id);
         User updatedUser = user.update(userUpdate);
         return userRepository.save(updatedUser);
     }
 
     @Transactional
-    public void login(long id) {
+    @Override
+    public void login(Long id) {
         User user = getById(id);
         User login = user.login(clockHolder);
         userRepository.save(login);
     }
 
     @Transactional
-    public void verifyEmail(long id, String certificationCode) {
+    public void verifyEmail(Long id, String certificationCode) {
         User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Users", id));
         User certificated = user.certificate(certificationCode);
         userRepository.save(certificated);

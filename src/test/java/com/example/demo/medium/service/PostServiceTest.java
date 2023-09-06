@@ -1,9 +1,9 @@
 package com.example.demo.medium.service;
 
+import com.example.demo.post.controller.port.PostService;
 import com.example.demo.post.domain.Post;
 import com.example.demo.post.domain.PostCreate;
 import com.example.demo.post.domain.PostUpdate;
-import com.example.demo.post.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +25,7 @@ class PostServiceTest {
     @Test
     void getById() throws Exception {
         // When
-        Post foundPost = postService.getById(2);
+        Post foundPost = postService.getById(2L);
 
         // Then
         assertThat(foundPost).isNotNull();
@@ -58,10 +58,10 @@ class PostServiceTest {
                 .build();
 
         // When
-        postService.update(2, postUpdate);
+        postService.update(2L, postUpdate);
 
         // Then
-        Post updated = postService.getById(2);
+        Post updated = postService.getById(2L);
         assertThat(updated.getContent()).isEqualTo(updateContent);
         assertThat(updated.getModifiedAt()).isGreaterThan(0);
     }

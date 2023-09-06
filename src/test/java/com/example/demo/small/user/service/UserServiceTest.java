@@ -4,12 +4,13 @@ import com.example.demo.common.domain.exception.CertificationCodeNotMatchedExcep
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.mock.FakeMailSender;
 import com.example.demo.mock.FakeUserRepository;
+import com.example.demo.user.controller.port.UserService;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserCreate;
 import com.example.demo.user.domain.UserStatus;
 import com.example.demo.user.domain.UserUpdate;
 import com.example.demo.user.service.CertificationService;
-import com.example.demo.user.service.UserService;
+import com.example.demo.user.service.UserServiceImpl;
 import com.example.demo.user.service.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,7 +32,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         userRepository = new FakeUserRepository();
-        userService = UserService.builder()
+        userService = UserServiceImpl.builder()
                 .userRepository(userRepository)
                 .certificationService(new CertificationService(new FakeMailSender()))
                 .clockHolder(() -> NOW)
@@ -78,7 +79,7 @@ class UserServiceTest {
         @DisplayName("실패 - 존재하지 않는 ID인 경우 예외가 발생한다.")
         @Test
         void noId() throws Exception {
-            assertThatThrownBy(() -> userService.getById(10000))
+            assertThatThrownBy(() -> userService.getById(10000L))
                     .isInstanceOf(ResourceNotFoundException.class);
         }
 
@@ -168,7 +169,7 @@ class UserServiceTest {
 
         @Test
         void wrongCode() throws Exception {
-            assertThatThrownBy(() -> userService.verifyEmail(2, "2938448"))
+            assertThatThrownBy(() -> userService.verifyEmail(2L, "2938448"))
                     .isInstanceOf(CertificationCodeNotMatchedException.class);
         }
     }
