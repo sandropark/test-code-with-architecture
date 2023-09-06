@@ -4,11 +4,11 @@ import com.example.demo.common.domain.exception.CertificationCodeNotMatchedExcep
 import com.example.demo.common.domain.exception.ResourceNotFoundException;
 import com.example.demo.mock.TestContainer;
 import com.example.demo.user.controller.UserController;
+import com.example.demo.user.controller.request.UserUpdateRequest;
 import com.example.demo.user.controller.response.MyProfileResponse;
 import com.example.demo.user.controller.response.UserResponse;
 import com.example.demo.user.domain.User;
 import com.example.demo.user.domain.UserStatus;
-import com.example.demo.user.domain.UserUpdate;
 import com.example.demo.user.service.port.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -148,19 +148,19 @@ class UserControllerTest {
         User activeUser = getActiveUser();
         userRepository.save(activeUser);
 
-        UserUpdate userUpdate = UserUpdate.builder()
+        UserUpdateRequest userUpdateRequest = UserUpdateRequest.builder()
                 .nickname("수정된 닉네임")
                 .address("수정된 주소")
                 .build();
 
         // When
-        ResponseEntity<MyProfileResponse> response = userController.updateMyInfo(activeUser.getEmail(), userUpdate);
+        ResponseEntity<MyProfileResponse> response = userController.updateMyInfo(activeUser.getEmail(), userUpdateRequest);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().getId()).isEqualTo(activeUser.getId());
-        assertThat(response.getBody().getAddress()).isEqualTo(userUpdate.getAddress());
-        assertThat(response.getBody().getNickname()).isEqualTo(userUpdate.getNickname());
+        assertThat(response.getBody().getAddress()).isEqualTo(userUpdateRequest.getAddress());
+        assertThat(response.getBody().getNickname()).isEqualTo(userUpdateRequest.getNickname());
         assertThat(response.getBody().getEmail()).isEqualTo(activeUser.getEmail());
         assertThat(response.getBody().getStatus()).isEqualTo(activeUser.getStatus());
         assertThat(response.getBody().getLastLoginAt()).isEqualTo(activeUser.getLastLoginAt());

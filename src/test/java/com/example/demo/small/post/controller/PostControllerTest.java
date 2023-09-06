@@ -37,7 +37,7 @@ class PostControllerTest {
             PostResponse expectedPostResponse = PostResponse.fromModel(post);
 
             // When
-            ResponseEntity<PostResponse> response = postController.getPostById(post.getId());
+            ResponseEntity<PostResponse> response = postController.getById(post.getId());
 
             // Then
             assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -47,7 +47,7 @@ class PostControllerTest {
         @Test
         void failure() throws Exception {
             // When & Then
-            assertThatThrownBy(() -> postController.getPostById(100L))
+            assertThatThrownBy(() -> postController.getById(100L))
                     .isInstanceOf(ResourceNotFoundException.class)
                     .hasMessage("Posts에서 ID 100를 찾을 수 없습니다.");
         }
@@ -60,7 +60,7 @@ class PostControllerTest {
         PostUpdate postUpdate = PostUpdate.builder().content("수정된 내용").build();
 
         // When
-        ResponseEntity<PostResponse> response = postController.updatePost(post.getId(), postUpdate);
+        ResponseEntity<PostResponse> response = postController.update(post.getId(), postUpdate);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
